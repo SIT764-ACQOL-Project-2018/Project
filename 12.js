@@ -34,38 +34,53 @@ app.post('/getAllData',function(req,res){
         if (err) throw err;
         con.query("SELECT * FROM survey_32", function (err, result, fields) {
           if (err) throw err;
-          console.log(result);
+          //console.log(result);
           res.send(result)
         });
       });
 })
 
-app.post('/getData',function(req,res){
+app.post('/getData', function (req, res) {
     console.log('******************');
     console.log(req.param('data'));
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    con.connect(function(err) {
+    con.connect(function (err) {
         if (err) throw err;
         var query = "SELECT ";
         var data = req.param('data');
-        for(var i=0; i<data.length; i++){
-            if(i>0){
+        for (var i = 0; i < data.length; i++) {
+            if (i > 0) {
                 query += ', ';
             }
             query += data[i];
         }
         query += ' FROM acqol.survey_32';
-        console.log(query);
+        //console.log(query);
         con.query(query, function (err, result, fields) {
-          if (err) throw err;
-          console.log(result);
-          res.send(result)
-        });
-      });
-})
+            if (err) throw err;
 
+
+            console.log(result);
+
+
+             var content = JSON.stringify(result);
+ 
+            
+                 const fs = require('fs');
+ 
+            fs.writeFile('survey.txt', result, 'utf8', function (err) {
+                if (err) throw err;
+                console.log('saved!');
+
+            });
+           
+            res.send(result);
+
+
+        });
+    });
+});
 var server = app.listen(5000, function () {
     console.log('Node server is running..');
 });
-
